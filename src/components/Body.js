@@ -1,6 +1,7 @@
 import ResturantCards from "./ResturantCards";
 import resList from "../utils/mockData";
 import { useEffect, useState } from "react";
+import Shimmer from "./Shimmer";
 
 // reslist -> normal js array here 
 // making it more powerful by giving it super powers and making it super powerful 
@@ -14,7 +15,13 @@ const Body = ()=>{
     // local state variable - super powerful variable 
     // it has scope inside the component only 
     // it can be modified in a function only , which is the second parameter in useState
-    let [listOfResturant,setListOfResturant] = useState([]);
+    const [listOfResturant,setListOfResturant] = useState([]);
+
+    //for filtering 
+    const[filteredRestaurant , setFilteredRes] = useState([]);
+
+    const [searchText , setSearchText] = useState("")
+    
 
     // useEffect Hook 
     useEffect(()=>{
@@ -28,7 +35,7 @@ const Body = ()=>{
           );
           const swiggyJsonData = await data.json();
           console.log(swiggyJsonData)
-          const restaurant_list = "top_brands_for_you";
+          const restaurant_list = "restaurant_grid_listing";
           const resturantData = swiggyJsonData.data?.cards?.find((card)=>{
             return card.card?.card?.id===restaurant_list;
           })
@@ -37,36 +44,59 @@ const Body = ()=>{
           const resturantList = resturantData.card.card.gridElements.infoWithStyle.restaurants.map(res=>(
             res.info
           ));
-        //   console.log(resturantList)
+          console.log(resturantList)
         // console.log(swiggyJsonData.data?.cards);
-        setListOfResturant(resturantList) 
+        setListOfResturant(resturantList) ;
+        setFilteredRes(resturantList);
     }
+    console.log('body rendered')
+    // console.log('List of restaurant',listOfResturant)
+    // console.log('Filtered List',filteredRestaurant)
+    // conditional rendering
+    return listOfResturant.length=== 0 ? <Shimmer/> : (<div className='body'>
+        
+        <div className='filter'>
 
-    if(listOfResturant===0){
-        return< h1>Loading...</h1>
-    }
+            <div className="search">
+                <input type='text' className="search-box" value={searchText}
+                onChange={(event)=>{
+                    setSearchText(event.target.value);
+                }}
+                />
+                <button
+                onClick={()=>{
+                    // if(searchText.length!=0){
+                        // console.log(dummylist);
+                        const ListOfFilteredRestaurant = listOfResturant.filter((res)=>res.name.toLowerCase().includes(searchText.toLowerCase()));
 
-    return(
-           <div className='body'>
-                  <div className='filter'>
-                      <button className="filter-btn"
-                      onClick={()=>{
-                        filteredList = listOfResturant.filter(resturant=>{
-                            return resturant.data.avgRating>4;
-                        })
-                        setListOfResturant(filteredList);
-                      }}
-                      >Top rated resturants</button>
-                  </div>
-                  <div className='res-container'>
-                         {
-                         listOfResturant.map((resturant)=><ResturantCards 
-                         key={resturant.id}
-                         resData = {resturant}
-                         />)
-                         }
-                  </div>
-           </div>
+                        console.log(ListOfFilteredRestaurant)
+                        // if(filteredRestaurant!=0)
+                       setFilteredRes(ListOfFilteredRestaurant)
+                    
+                }}
+                >Search</button>
+            </div>
+
+            <button className="filter-btn"
+                onClick={()=>{
+                  filteredList = listOfResturant.filter(resturant=>{
+                      return resturant.data.avgRating>4;
+                  })
+                  setListOfResturant(filteredList);
+                }}
+            >Top rated resturants</button>
+        </div>
+
+        <div className='res-container'>
+               {
+               filteredRestaurant.map((resturant)=><ResturantCards 
+               key={resturant.id}
+               resData = {resturant}
+               />)
+               }
+        </div>
+ </div> 
+           
     )
 };
 export default Body;
