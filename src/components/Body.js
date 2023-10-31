@@ -2,7 +2,7 @@ import ResturantCards from "./ResturantCards";
 import resList from "../utils/mockData";
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer";
-
+import { Link } from "react-router-dom";
 // reslist -> normal js array here 
 // making it more powerful by giving it super powers and making it super powerful 
 // we user a hook for it 
@@ -50,8 +50,8 @@ const Body = ()=>{
         setFilteredRes(resturantList);
     }
     console.log('body rendered')
-    // console.log('List of restaurant',listOfResturant)
-    // console.log('Filtered List',filteredRestaurant)
+    console.log('List of restaurant',listOfResturant)
+    console.log('Filtered List',filteredRestaurant)
     // conditional rendering
     return listOfResturant.length=== 0 ? <Shimmer/> : (<div className='body'>
         
@@ -69,7 +69,7 @@ const Body = ()=>{
                         // console.log(dummylist);
                         const ListOfFilteredRestaurant = listOfResturant.filter((res)=>res.name.toLowerCase().includes(searchText.toLowerCase()));
 
-                        console.log(ListOfFilteredRestaurant)
+                        // console.log(ListOfFilteredRestaurant)
                         // if(filteredRestaurant!=0)
                        setFilteredRes(ListOfFilteredRestaurant)
                     
@@ -89,10 +89,10 @@ const Body = ()=>{
 
         <div className='res-container'>
                {
-               filteredRestaurant.map((resturant)=><ResturantCards 
+               filteredRestaurant.map((resturant)=> <Link to={'/restaurant/'+resturant.id}><ResturantCards 
                key={resturant.id}
                resData = {resturant}
-               />)
+               /></Link>)
                }
         </div>
  </div> 

@@ -16,3 +16,13 @@ Header
    - links
    - address
    - contact
+
+
+# in outlet of App.js 
+ we have : 
+ {/* if path is / */}
+<Body/>
+{/* if path is about */}
+<About/>
+{/* if path is contact */}
+<Contact/>
