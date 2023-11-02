@@ -1,6 +1,7 @@
 import ResturantCards from "./ResturantCards";
 import resList from "../utils/mockData";
 import { useEffect, useState } from "react";
+import useOnlineStatus from "../utils/useOnlineStatus";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 // reslist -> normal js array here 
@@ -11,19 +12,12 @@ import { Link } from "react-router-dom";
 
 const Body = ()=>{
 
-    // usestate hook 
-    // local state variable - super powerful variable 
-    // it has scope inside the component only 
-    // it can be modified in a function only , which is the second parameter in useState
     const [listOfResturant,setListOfResturant] = useState([]);
-
-    //for filtering 
+ 
     const[filteredRestaurant , setFilteredRes] = useState([]);
 
     const [searchText , setSearchText] = useState("")
-    
 
-    // useEffect Hook 
     useEffect(()=>{
         console.log('UseEffect called');
         fetchData();
@@ -39,20 +33,26 @@ const Body = ()=>{
           const resturantData = swiggyJsonData.data?.cards?.find((card)=>{
             return card.card?.card?.id===restaurant_list;
           })
-        //   console.log(resturantData);
-        //   console.log(resturantData.card.card.gridElements.infoWithStyle.restaurants);
+
           const resturantList = resturantData.card.card.gridElements.infoWithStyle.restaurants.map(res=>(
             res.info
           ));
           console.log(resturantList)
-        // console.log(swiggyJsonData.data?.cards);
         setListOfResturant(resturantList) ;
         setFilteredRes(resturantList);
     }
     console.log('body rendered')
     console.log('List of restaurant',listOfResturant)
     console.log('Filtered List',filteredRestaurant)
-    // conditional rendering
+
+    const onlineStatus = useOnlineStatus();
+    if(onlineStatus===false){
+      return (
+        <h1>
+          Looks like you're offline !! Please check your internet connection. 
+        </h1>
+      )
+    }
     return listOfResturant.length=== 0 ? <Shimmer/> : (<div className='body'>
         
         <div className='filter'>
@@ -65,12 +65,8 @@ const Body = ()=>{
                 />
                 <button
                 onClick={()=>{
-                    // if(searchText.length!=0){
-                        // console.log(dummylist);
+                    
                         const ListOfFilteredRestaurant = listOfResturant.filter((res)=>res.name.toLowerCase().includes(searchText.toLowerCase()));
-
-                        // console.log(ListOfFilteredRestaurant)
-                        // if(filteredRestaurant!=0)
                        setFilteredRes(ListOfFilteredRestaurant)
                     
                 }}
